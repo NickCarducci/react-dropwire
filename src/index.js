@@ -19,6 +19,7 @@ class Cable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      go:true,
       limit: [],
       cache: null,
       mountsCount: 0,
