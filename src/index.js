@@ -18,14 +18,7 @@ import React from "react";
 class Cable extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      go:true,
-      limit: [],
-      cache: null,
-      mountsCount: 0,
-      cacheStyle: "",
-      framewidth: 200
-    };
+    this.state = { limit: [], cache: null, mountsCount: 0, cacheStyle: "" };
     this.page = React.createRef();
     this.fwdtwe = React.createRef();
   }
@@ -51,9 +44,18 @@ class Cable extends React.Component {
     clearTimeout(this.setset);
   };
   checkIfBetween = () => {
-    const { cache } = this.state;
+    const { frameheight, cache } = this.state;
     const { scrollTopAndHeight, scrollTop, girth, timeout } = this.props;
-    var girt = girth ? girth : 500;
+    var girt =
+      girth && !isNaN(girth)
+        ? girth + 500
+        : frameheight
+        ? frameheight
+        : this.props.style &&
+          this.props.style.height &&
+          !isNaN(this.props.style.height)
+        ? this.props.style.height + 500
+        : 500;
     var timeou = timeout ? timeout : 1500;
     clearTimeout(this.setset);
     this.setset = setTimeout(() => {
@@ -61,14 +63,14 @@ class Cable extends React.Component {
       var between =
         page.offsetTop - scrollTop > Number(`-${girt}`) &&
         scrollTopAndHeight - page.offsetTop > Number(`-${girt}`);
-
+      //console.log(page.offsetTop);
       if (!this.state.mount) {
         //console.log(between, page.offsetTop, scrollTop);
-        this.setState({ mount: between }, () => {});
+        /*between && */ this.setState({ mount: between }, () => {});
       } else {
         var continuee = this.props.fwd.current;
         //between && console.log(between, continuee.outerHTML);
-        //if (!continuee && !cache) return;
+        if (!continuee && !cache) return;
         /*const cacheStyle = JSON.parse(
           (cache ? cache : continuee.outerHTML)
             .split(`style="`)[1]
@@ -78,7 +80,8 @@ class Cable extends React.Component {
         );*/
         //console.log(cacheStyle);
         //console.log(cache, continuee.offsetHeight, continuee.offsetWidth);
-        if (!cache && this.state.loaded) {
+        if (!cache && (this.state.loaded || this.props.img)) {
+          //if (continuee.offsetHeight !== 0)
           this.setState({
             cache: continuee.outerHTML,
             //cacheStyle,
@@ -86,30 +89,32 @@ class Cable extends React.Component {
             framewidth: continuee.offsetWidth
           });
         } else if (!between) {
+          //console.log("!between", continuee.outerHTML);
           /* if (continuee) {
                 
                 const children = [...continuee.children];
                 console.log(children);
                 if (children.length > 0) {
                   var gl = null;
-
                   const foun = children.find(
                     (x) => (gl = x.getContext("webgl"))
                   );
-
                   foun.addEventListener(
                     "webglcontextlost",
                     (e) => console.log(e),
                     false
                   );
-
                   gl.getExtension("WEBGL_lose_context").loseContext();
                 }
               }*/
-          continuee.remove();
+          //continuee.remove();
+          if (scrollTop !== 0) return;
+          continuee && continuee.remove();
+          //      console.log(girt);
           return (page.innerHTML = "");
           // this.setState({ mount: false });
         } else if (page.innerHTML === "") {
+          console.log("reloading");
           const children = [...page.children];
           if (
             cache &&
@@ -137,29 +142,40 @@ class Cable extends React.Component {
         loaded: true
       });
     };
+    const optionalwidth = this.state.framewidth
+      ? this.state.framewidth
+      : this.props.style && this.props.style.width // &&
+      ? //!isNaN(this.props.style.width)
+        this.props.style.width
+      : "200px";
+    //console.log(optionalwidth);
     return (
       <div
         ref={this.page}
         style={{
+          //width: this.state.framewidth,
+          ...this.props.style,
+          overflowX: "auto",
           shapeOutside: "rect()",
           float,
-          height: this.state.frameheight,
-          width: this.state.framewidth,
-          ...this.props.style
+          height: this.state.frameheight
+            ? this.state.frameheight + 20
+            : "max-content",
+          width: optionalwidth,
+          maxWidth: "100%"
+          //minWidth: optionalwidth // "max-content"
         }}
       >
-        {!mount || src === "" ? (
-          <span style={{ border: "1px gray solid" }}>{title}</span>
+        {src === "" || (!img && !mount) ? (
+          <span style={{ border: "2px gray solid" }}>{title}</span>
         ) : img ? (
           <img
-            onLoad={onLoad}
+            //onLoad={onLoad}
             onError={onError}
             alt={title}
             style={{
-              shapeOutside: "rect()",
-              float,
               width: "200px",
-              border: 0,
+              border: !mount || src === "" ? "2px gray solid" : 0,
               ...this.props.style
             }}
             ref={this.props.fwd}
@@ -171,8 +187,6 @@ class Cable extends React.Component {
             onError={onError}
             title={title}
             style={{
-              shapeOutside: "rect()",
-              float,
               width: "200px",
               border: 0,
               ...this.props.style
