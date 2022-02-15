@@ -3,7 +3,7 @@ import React from "react";
 //import ReactHtmlParser from "react-html-parser";
 //import reactElementToJSXString from "react-element-to-jsx-string";
 //import ReactDOMServer from "react-dom/server";
-//import ExecutionEnvironment from "exenv";
+import ExecutionEnvironment from "exenv";
 
 /*class Forward extends React.Component {
   constructor(props) {
@@ -22,11 +22,11 @@ class Cable extends React.Component {
     this.page = React.createRef();
     this.fwdtwe = React.createRef();
   }
-  /*componentDidMount() {
+  componentDidMount() {
     if (ExecutionEnvironment.canUseDOM) {
       this.setState({ go: true }, () => this.checkIfBetween());
     }
-  }*/
+  }
   componentDidUpdate = (prevProps) => {
     if (this.state.go && this.props.scrolling !== prevProps.scrolling) {
       this.checkIfBetween();
@@ -61,14 +61,37 @@ class Cable extends React.Component {
     this.setset = setTimeout(() => {
       var page = this.page.current;
       var between =
+        //Math.abs(scrollTop + page.offsetTop - window.scrollY) <
+        //girt + window.innerHeight;
         page.offsetTop - scrollTop > Number(`-${girt}`) &&
         scrollTopAndHeight - page.offsetTop > Number(`-${girt}`);
+      /* Math.abs(
+            scrollTop +
+              page.offsetTop -
+              (window.scrollY +
+                window.innerHeight /
+                  2) /*+ window.innerHeight / 2 - page.offsetTop*
+          )
+          Math.abs(
+          scrollTop +
+            page.offsetTop -
+            (window.scrollY +
+              window.innerHeight /
+                2) /*+ window.innerHeight / 2 - page.offsetTop*
+        ) < girt; //Number(`-${girt}`);*/
       //console.log(page.offsetTop);
       if (!this.state.mount) {
+        /*console.log(
+          Math.abs(scrollTop + page.offsetTop - window.scrollY),
+          scrollTop,
+          page.offsetTop,
+          window.scrollY ,
+          girt
+        );*/
         //console.log(between, page.offsetTop, scrollTop);
         /*between && */ this.setState({ mount: between }, () => {});
       } else {
-        var continuee = this.props.fwd.current;
+        var continuee = this.props.fwd && this.props.fwd.current;
         //between && console.log(between, continuee.outerHTML);
         if (!continuee && !cache) return;
         /*const cacheStyle = JSON.parse(
@@ -108,18 +131,27 @@ class Cable extends React.Component {
                 }
               }*/
           //continuee.remove();
-          if (scrollTop !== 0) return;
-          continuee && continuee.remove();
+          //if (scrollTop !== 0) return;
+          //continuee && continuee.remove();
+
+          if (continuee) {
+            while (continuee.children.length > 0) {
+              continuee.remove(
+                continuee.children[continuee.children.length - 1]
+              );
+            }
+          }
           //      console.log(girt);
-          return (page.innerHTML = "");
+          //if (Object.keys(page.children).length !== 0 /*page.innerHTML !== ""*/)
+          //return (page.innerHTML = "");
           // this.setState({ mount: false });
-        } else if (page.innerHTML === "") {
-          console.log("reloading");
+        } /*if (page.innerHTML === "") */ else {
           const children = [...page.children];
           if (
             cache &&
             (children.length === 0 || !children.find((x) => x === cache))
           ) {
+            console.log("reloading");
             //console.log("replenishing, new scroll", cache);
             return (page.innerHTML = this.state.cache);
           }
@@ -142,26 +174,35 @@ class Cable extends React.Component {
         loaded: true
       });
     };
-    const optionalwidth = this.state.framewidth
-      ? this.state.framewidth
-      : this.props.style && this.props.style.width // &&
+    const optionalwidth =
+      (this.state.img || this.state.loaded) && this.state.framewidth
+        ? this.state.framewidth
+        : this.props.style && this.props.style.width // &&
+        ? //!isNaN(this.props.style.width)
+          this.props.style.width
+        : "200px";
+    const optionalheight = this.state.height
+      ? this.state.height
+      : this.props.style && this.props.style.height // &&
       ? //!isNaN(this.props.style.width)
-        this.props.style.width
-      : "200px";
+        this.props.style.height
+      : "min-content";
     //console.log(optionalwidth);
     return (
       <div
         ref={this.page}
         style={{
+          boxShadow: "inset 0px 0px 50px 15px rgb(200,100,120)",
           //width: this.state.framewidth,
+          //width: optionalwidth,
           ...this.props.style,
-          overflowX: "auto",
+          //overflowX: "auto",
           shapeOutside: "rect()",
           float,
+          overflow: "hidden",
           height: this.state.frameheight
-            ? this.state.frameheight + 20
+            ? this.state.frameheight + 10
             : "max-content",
-          width: optionalwidth,
           maxWidth: "100%"
           //minWidth: optionalwidth // "max-content"
         }}
@@ -174,9 +215,13 @@ class Cable extends React.Component {
             onError={onError}
             alt={title}
             style={{
-              width: "200px",
-              border: !mount || src === "" ? "2px gray solid" : 0,
-              ...this.props.style
+              //width: "100%",
+              border: src === "" ? "2px gray solid" : 0,
+              height: optionalheight,
+              minWidth: optionalwidth, // "max-content"
+              ...this.props.style,
+              overflowX: "auto",
+              maxWidth: "100%"
             }}
             ref={this.props.fwd}
             src={src}
@@ -187,9 +232,13 @@ class Cable extends React.Component {
             onError={onError}
             title={title}
             style={{
-              width: "200px",
+              //width: "100%",
               border: 0,
-              ...this.props.style
+              height: optionalheight,
+              width: optionalwidth, // "max-content"
+              ...this.props.style,
+              overflowX: "auto",
+              maxWidth: "100%"
             }}
             ref={this.props.fwd}
             src={src}
@@ -200,3 +249,4 @@ class Cable extends React.Component {
   }
 }
 export default React.forwardRef((props, ref) => <Cable fwd={ref} {...props} />);
+ 
