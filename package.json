@@ -1,6 +1,6 @@
 {
     "name": "react-dropwire",
-    "version": "1.3.0",
+    "version": "1.3.1",
     "description": "for when you have plenty of iframe, video & img html elements and want style-delay, window.scrollTop element.offsetTop and unmounting upon error",
     "main": "src/index.js",
     "keywords": [
