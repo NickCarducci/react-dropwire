@@ -3,7 +3,7 @@ import React from "react";
 //import ReactHtmlParser from "react-html-parser";
 //import reactElementToJSXString from "react-element-to-jsx-string";
 //import ReactDOMServer from "react-dom/server";
-import ExecutionEnvironment from "exenv";
+//import ExecutionEnvironment from "exenv";
 
 /*class Forward extends React.Component {
   constructor(props) {
@@ -22,11 +22,11 @@ class Cable extends React.Component {
     this.page = React.createRef();
     this.fwdtwe = React.createRef();
   }
-  componentDidMount() {
+  /*componentDidMount() {
     if (ExecutionEnvironment.canUseDOM) {
       this.setState({ go: true }, () => this.checkIfBetween());
     }
-  }
+  }*/
   componentDidUpdate = (prevProps) => {
     if (this.state.go && this.props.scrolling !== prevProps.scrolling) {
       this.checkIfBetween();
@@ -45,7 +45,7 @@ class Cable extends React.Component {
   };
   checkIfBetween = () => {
     const { frameheight, cache } = this.state;
-    const { scrollTopAndHeight, scrollTop, girth, timeout } = this.props;
+    const { /*scrollTopAndHeight,*/ scrollTop, girth, timeout } = this.props;
     var girt =
       girth && !isNaN(girth)
         ? girth + 500
@@ -63,8 +63,11 @@ class Cable extends React.Component {
       var between =
         //Math.abs(scrollTop + page.offsetTop - window.scrollY) <
         //girt + window.innerHeight;
-        page.offsetTop - scrollTop > Number(`-${girt}`) &&
-        scrollTopAndHeight - page.offsetTop > Number(`-${girt}`);
+        page.offsetTop - scrollTop <
+        Math.abs(
+          girt
+        ); /*Number(`-${girt}`) &&
+        scrollTopAndHeight - page.offsetTop > Number(`-${girt}`);*/
       /* Math.abs(
             scrollTop +
               page.offsetTop -
@@ -148,6 +151,7 @@ class Cable extends React.Component {
         } /*if (page.innerHTML === "") */ else {
           const children = [...page.children];
           if (
+            //frusterated the second, paniced the first" ca
             cache &&
             (children.length === 0 || !children.find((x) => x === cache))
           ) {
@@ -175,18 +179,21 @@ class Cable extends React.Component {
       });
     };
     const optionalwidth =
-      (this.state.img || this.state.loaded) && this.state.framewidth
+      /*(this.state.img || this.state.loaded) && this.state.framewidth
         ? this.state.framewidth
-        : this.props.style && this.props.style.width // &&
+        :*/ this
+        .props.style && this.props.style.width // &&
         ? //!isNaN(this.props.style.width)
           this.props.style.width
-        : "200px";
-    const optionalheight = this.state.height
+        : 200;
+    const optionalheight =
+      /*this.state.height
       ? this.state.height
-      : this.props.style && this.props.style.height // &&
-      ? //!isNaN(this.props.style.width)
-        this.props.style.height
-      : "min-content";
+      :*/ this.props.style &&
+      this.props.style.height // &&
+        ? //!isNaN(this.props.style.width)
+          this.props.style.height
+        : "auto";
     //console.log(optionalwidth);
     return (
       <div
@@ -194,16 +201,17 @@ class Cable extends React.Component {
         style={{
           boxShadow: "inset 0px 0px 50px 15px rgb(200,100,120)",
           //width: this.state.framewidth,
-          //width: optionalwidth,
           ...this.props.style,
           //overflowX: "auto",
           shapeOutside: "rect()",
           float,
           overflow: "hidden",
-          height: this.state.frameheight
+          height: optionalheight,
+          /*this.state.frameheight
             ? this.state.frameheight + 10
-            : "max-content",
-          maxWidth: "100%"
+            : "max-content",*/
+          width: optionalwidth // "max-content"
+          //maxWidth: "100%"
           //minWidth: optionalwidth // "max-content"
         }}
       >
@@ -217,9 +225,9 @@ class Cable extends React.Component {
             style={{
               //width: "100%",
               border: src === "" ? "2px gray solid" : 0,
+              //...this.props.style,
               height: optionalheight,
-              minWidth: optionalwidth, // "max-content"
-              ...this.props.style,
+              width: optionalwidth, // "max-content"
               overflowX: "auto",
               maxWidth: "100%"
             }}
@@ -234,11 +242,12 @@ class Cable extends React.Component {
             style={{
               //width: "100%",
               border: 0,
-              height: optionalheight,
-              width: optionalwidth, // "max-content"
-              ...this.props.style,
-              overflowX: "auto",
-              maxWidth: "100%"
+              //...this.props.style,
+              //height: optionalheight,
+              //width: optionalwidth, // "max-content"
+              //overflowX: "auto",
+              height: "100%",
+              width: "100%"
             }}
             ref={this.props.fwd}
             src={src}
@@ -249,4 +258,123 @@ class Cable extends React.Component {
   }
 }
 export default React.forwardRef((props, ref) => <Cable fwd={ref} {...props} />);
- 
+
+/**
+ * 
+      const { cache } = this.state;
+      const { scrollTopAndHeight, scrollTop, girth, timeout } = this.props;
+      var girt = girth ? girth : 1000;
+      var timeou = timeout ? timeout : 1500;
+      var continuee = this.props.fwd.current;
+      clearTimeout(this.setset);
+      this.setset = setTimeout(() => {
+        var page = this.page.current;
+        var between =
+          page.offsetTop - scrollTop > Number(`-${girt}`) &&
+          scrollTopAndHeight - page.offsetTop > Number(`-${girt}`);
+        this.setState({ mount: this.state.mount ? this.state.mount : between });
+        if (!continuee && !cache) return;
+        //if (!continuee) continuee = cache;
+        //const clone = continuee; //React.cloneElement(continuee);
+        this.setState({
+          //ReactDOMServer.renderToStaticMarkup, reactElementToJSXString
+          //is just html object
+          cache: cache ? cache : continuee.outerHTML
+        });
+        if (!between && continuee) {
+          //while (page.firstChild) {
+          //page.removeChild(continuee);
+          //console.log(continuee.parentNode);
+          //console.log(page);
+          page.innerHTML = "";
+          //continuee.parentNode && page.removeChild(continuee);
+          //ReactDOM.unmountComponentAtNode(page); //ReactDOM.findDOMNode(this).parentNode
+          //while (page.firstChild) {
+          //let onClick =
+          //"ontouchstart" in continuee ? "touchstart" : "onclick";
+          //if (continuee[onClick]) continuee.remove(); //touchevent
+          //continuee.click();
+          //}
+          //continuee.parentNode.removeChild(continuee);
+          return;
+        }
+        //if (!between && continuee) return continuee.remove();
+        const children = [...page.children];
+        const d = children.find((x) => x === this.state.cache);
+        // console.log(children);
+        if (
+          children.length === 0 ||
+          !d
+          //children[children.length - 1] !== this.state.cache
+        ) {
+          /*page.innerHTML = React.forwardRef((props, ref) => (
+              <Forward fwdtwe={ref} {...props} />
+            ));*
+          //console.log(page);
+          //console.log(this.state.cache);
+          var cach = this.state.cache;
+          /**renderToStaticMarkup over renderToString as it does not add any extra DOM attributes that React uses internally, like `data-reactroot: */
+/*const namer = cache.getAttribute("alt") ? "alt" : "title";
+              cach.setAttribute(
+                namer,
+                cache.getAttribute(namer) + this.state.mountsCount
+              );*/
+/*const img = cach.split(`alt="`)[1];
+                const namer = img
+                  ? cach.split(`alt="`)[1].split(`"`)[0]
+                  : cach.split(`title="`)[1].split(`"`)[0];
+                cach =
+                  cach.substring(0, img ? 10 : 15) +
+                  namer +
+                  this.state.mountsCount +
+                  cach.substring(
+                    cach.indexOf(namer) + namer.length,
+                    cach.length
+                  );*
+          page.innerHTML = cach; //<div>{cache}</div>;
+          //new DOMParser().parseFromString(cach, "text/html")
+          //ReactDOM.render(cach, page);
+          //ReactDOM.render(ReactHtmlParser(cach), page);
+          this.setState({ mountsCount: this.state.mountsCount + 1 });
+          //page.appendChild(cache);
+          //console.log(page);
+        }
+      }, timeou);
+ */
+
+/**
+  * const Render = () => {
+  useEffect(() => {
+    const handler = event => {
+      const data = JSON.parse(event.data)
+      console.log("Hello World?", data)
+    }
+    window.addEventListener("message", handler)
+    // clean up
+    return () => window.removeEventListener("message", handler)
+  }, []) // empty array => run only once
+  return (
+    <div>
+      <iframe
+        srcDoc={`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            window.top.postMessage(
+              JSON.stringify({
+                error: false,
+                message: "Hello World"
+              }),
+              '*'
+            );
+          </head>
+          <body>
+            <h1>Content inside an iframe, who knew...</h1>
+          </body>
+        </html>
+      `}
+      />
+    </div>
+  )
+}
+  */
