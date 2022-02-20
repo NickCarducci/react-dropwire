@@ -18,7 +18,7 @@ import React from "react";
 class Cable extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { limit: [], cache: null, mountsCount: 0, cacheStyle: "" };
+    this.state = { limit: [], cache: null, mountsCount: 0, cacheStyle: "", go:true };
     this.page = React.createRef();
     this.fwdtwe = React.createRef();
   }
@@ -63,10 +63,9 @@ class Cable extends React.Component {
       var between =
         //Math.abs(scrollTop + page.offsetTop - window.scrollY) <
         //girt + window.innerHeight;
-        page.offsetTop - scrollTop <
-        Math.abs(
+        Math.abs(page.offsetTop - scrollTop) <
           girt
-        ); /*Number(`-${girt}`) &&
+        /*Number(`-${girt}`) &&
         scrollTopAndHeight - page.offsetTop > Number(`-${girt}`);*/
       /* Math.abs(
             scrollTop +
