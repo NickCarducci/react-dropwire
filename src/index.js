@@ -18,7 +18,13 @@ import React from "react";
 class Cable extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { limit: [], cache: null, mountsCount: 0, cacheStyle: "", go:true };
+    this.state = {
+      limit: [],
+      cache: null,
+      mountsCount: 0,
+      cacheStyle: "",
+      go: true
+    };
     this.page = React.createRef();
     this.fwdtwe = React.createRef();
   }
@@ -44,18 +50,18 @@ class Cable extends React.Component {
     clearTimeout(this.setset);
   };
   checkIfBetween = () => {
-    const { frameheight, cache } = this.state;
+    const { /*frameheight,*/ cache } = this.state;
     const { /*scrollTopAndHeight,*/ scrollTop, girth, timeout } = this.props;
     var girt =
       girth && !isNaN(girth)
         ? girth + 500
-        : frameheight
+        : window.innerHeight; /*frameheight
         ? frameheight
-        : this.props.style &&
-          this.props.style.height &&
-          !isNaN(this.props.style.height)
-        ? this.props.style.height + 500
-        : 500;
+        : Style &&
+          Style.height &&
+          !isNaN(Style.height)
+        ? Style.height + 500
+        : 500;*/
     var timeou = timeout ? timeout : 1500;
     clearTimeout(this.setset);
     this.setset = setTimeout(() => {
@@ -63,9 +69,8 @@ class Cable extends React.Component {
       var between =
         //Math.abs(scrollTop + page.offsetTop - window.scrollY) <
         //girt + window.innerHeight;
-        Math.abs(page.offsetTop - scrollTop) <
-          girt
-        /*Number(`-${girt}`) &&
+        Math.abs(page.offsetTop - scrollTop) < girt;
+      /*Number(`-${girt}`) &&
         scrollTopAndHeight - page.offsetTop > Number(`-${girt}`);*/
       /* Math.abs(
             scrollTop +
@@ -103,7 +108,6 @@ class Cable extends React.Component {
             .replaceAll(";", `",`)
             .replaceAll(": ", `: "`)
         );*/
-        //console.log(cacheStyle);
         //console.log(cache, continuee.offsetHeight, continuee.offsetWidth);
         if (!cache && (this.state.loaded || this.props.img)) {
           //if (continuee.offsetHeight !== 0)
@@ -116,7 +120,6 @@ class Cable extends React.Component {
         } else if (!between) {
           //console.log("!between", continuee.outerHTML);
           /* if (continuee) {
-                
                 const children = [...continuee.children];
                 console.log(children);
                 if (children.length > 0) {
@@ -135,7 +138,6 @@ class Cable extends React.Component {
           //continuee.remove();
           //if (scrollTop !== 0) return;
           //continuee && continuee.remove();
-
           if (continuee) {
             while (continuee.children.length > 0) {
               continuee.remove(
@@ -143,7 +145,7 @@ class Cable extends React.Component {
               );
             }
           }
-          //      console.log(girt);
+          // console.log(girt);
           //if (Object.keys(page.children).length !== 0 /*page.innerHTML !== ""*/)
           //return (page.innerHTML = "");
           // this.setState({ mount: false });
@@ -163,72 +165,77 @@ class Cable extends React.Component {
     }, timeou);
   };
   render() {
-    const { mount /*, cacheStyle */ } = this.state;
-    const { src, float, title, img } = this.props;
-    //const limited = limit.find((x) => x === Object.keys(this.props.fwd));
+    const { mount, stopfail } = this.state;
+    const { src, float, title, img, style: Style } = this.props;
     const onError = (e) => {
+      this.setState({ stopfail: true });
       //this.props.fwd.current.remove();
       this.props.onError(e);
-    }; //ternaries remove the node and element; display removes the element, but not the node
-    //const parsedStyle = JSON.parse(`{ ${cacheStyle} }`);
+    }; //ternaries remove the node (error) and element;
+    //display removes the element, but not the node; use state
     const onLoad = (e) => {
       console.log("loaded");
       this.setState({
         loaded: true
       });
     };
-    const optionalwidth =
-      /*(this.state.img || this.state.loaded) && this.state.framewidth
-        ? this.state.framewidth
-        :*/ this
-        .props.style && this.props.style.width // &&
-        ? //!isNaN(this.props.style.width)
-          this.props.style.width
-        : 200;
-    const optionalheight =
-      /*this.state.height
-      ? this.state.height
-      :*/ this.props.style &&
-      this.props.style.height // &&
-        ? //!isNaN(this.props.style.width)
-          this.props.style.height
-        : "auto";
-    //console.log(optionalwidth);
+
+    /*var optionalheight = "auto";
+    var optionalwidth = 200;
+    if (Style) {
+      optionalheight =
+        !stopfail && Style.height && !isNaN(Style.height)
+          ? this.props.img
+            ? "100%"
+            : "auto"
+          : Style.height && this.state.loaded
+          ? Style.height
+          : "auto";
+      optionalwidth = !stopfail && Style.width ? Style.width : 200;
+    }*/
+    const w = Style && Style.width;
+    const h = Style && Style.height;
+    const usewidth =
+      w &&
+      (!isNaN(w) ||
+        ["px", "em", "vw"].includes(
+          String(w).substring(w.length - 2, w.length)
+        ) ||
+        ["%"].includes(String(w)[w.length]));
+    const useheight =
+      h &&
+      (!isNaN(h) ||
+        ["px", "em", "vh"].includes(
+          String(h).substring(h.length - 2, h.length)
+        ) ||
+        ["%"].includes(String(h)[h.length]));
+    const defaultOK = useheight && useheight;
     return (
       <div
         ref={this.page}
         style={{
+          textAlign: float,
+          position: "relative",
           boxShadow: "inset 0px 0px 50px 15px rgb(200,100,120)",
-          //width: this.state.framewidth,
-          ...this.props.style,
-          //overflowX: "auto",
+          ...Style,
           shapeOutside: "rect()",
           float,
-          overflow: "hidden",
-          height: optionalheight,
-          /*this.state.frameheight
-            ? this.state.frameheight + 10
-            : "max-content",*/
-          width: optionalwidth // "max-content"
-          //maxWidth: "100%"
-          //minWidth: optionalwidth // "max-content"
+          //overflow: "auto",
+          height: h //`calc(${h + 60})`,
+          //width: useheight ? "min-content" : "100%"
         }}
       >
         {src === "" || (!img && !mount) ? (
           <span style={{ border: "2px gray solid" }}>{title}</span>
         ) : img ? (
           <img
-            //onLoad={onLoad}
             onError={onError}
             alt={title}
             style={{
-              //width: "100%",
+              position: "relative",
               border: src === "" ? "2px gray solid" : 0,
-              //...this.props.style,
-              height: optionalheight,
-              width: optionalwidth, // "max-content"
-              overflowX: "auto",
-              maxWidth: "100%"
+              height: !defaultOK && usewidth ? "auto" : h,
+              width: !defaultOK && useheight ? "auto" : w ? w : 200
             }}
             ref={this.props.fwd}
             src={src}
@@ -239,17 +246,15 @@ class Cable extends React.Component {
             onError={onError}
             title={title}
             style={{
-              //width: "100%",
+              overflow: "auto",
+              position: "relative",
               border: 0,
-              //...this.props.style,
-              //height: optionalheight,
-              //width: optionalwidth, // "max-content"
-              //overflowX: "auto",
-              height: "100%",
+              height: h, //`calc(${h + 60})`,
               width: "100%"
             }}
             ref={this.props.fwd}
             src={src}
+            iframe={{ ...this.props.iframe }}
           />
         )}
       </div>
