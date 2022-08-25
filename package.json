@@ -1,0 +1,35 @@
+{
+    "name": "react-dropwire",
+    "version": "1.4.0",
+    "description": "for when you have plenty of iframe, video & img html elements and want style-delay, window.scrollTop element.offsetTop and unmounting upon error",
+    "main": "src/index.js",
+    "keywords": [
+        "scroll",
+        "onScroll",
+        "embed",
+        "html",
+        "img",
+        "iframe",
+        "video",
+        "social media",
+        "createRef",
+        "react"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nickcarducci/react-dropwire"
+    },
+    "files": [
+        "src",
+        "index.js"
+    ],
+    "sideEffects": false,
+    "license": "UNLICENSED",
+    "author": "Nick Carducci nick@carducci.sh",
+    "bugs": {
+        "url": "https://github.com/nickcarducci/react-dropwire"
+    },
+    "peerDependencies": {
+        "react": ">=16.8.0"
+    }
+}
